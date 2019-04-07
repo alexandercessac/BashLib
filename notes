@@ -1,0 +1,37 @@
+#!/bin/bash
+
+#todo: description
+editNote() {
+ editor="${EDITOR:-${VISUAL:-$SELECTED_EDITOR}}"
+ if [ -z $editor ]; then
+  if [ -f "$HOME/.selected_editor" ]; then
+   if [ ! select-editor ]; then
+    >&2 echo "unable to determine text editor. Set EDITOR variable"
+    exit 1
+   fi
+  fi
+  source "$HOME/.selected_editor"
+  editor=$SELECTED_EDITOR
+ fi
+ "editor" "$1"
+};
+
+if [ ! -d "$HOME/notes" ]; then
+ mkdir "$HOME/notes"
+fi
+
+shopt -s nullglob
+allNotes=(~/notes/*)
+allNotes+=('* new *')
+select note in "${allNotes[@]}"
+do
+ case $note in
+ '* new *')
+  read -p 'Name of new note?: ' newNote
+  editNote "$HOME/notes/$newNote"
+ ;;
+ *)
+  editNote $note
+ ;;
+ esac
+done
