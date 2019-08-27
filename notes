@@ -2,7 +2,7 @@
 
 #todo: description
 editNote() {
- editor="${EDITOR:-${VISUAL:-$SELECTED_EDITOR}}"
+ local editor="${EDITOR:-${VISUAL:-$SELECTED_EDITOR}}"
  if [ -z $editor ]; then
   if [ -f "$HOME/.selected_editor" ]; then
    if [ ! select-editor ]; then
@@ -23,12 +23,16 @@ fi
 shopt -s nullglob
 allNotes=(~/notes/*)
 allNotes+=('* new *')
+allNotes+=('[q]uit')
 select note in "${allNotes[@]}"
 do
  case $note in
  '* new *')
   read -p 'Name of new note?: ' newNote
   editNote "$HOME/notes/$newNote"
+ ;;
+ '[q]uit')
+  exit 0;
  ;;
  *)
   editNote $note
