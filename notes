@@ -20,18 +20,24 @@ if [ ! -d "$HOME/notes" ]; then
  mkdir "$HOME/notes"
 fi
 
+quitStr='* [q]uit *'
+newStr='* [n]ew *'
+
 shopt -s nullglob
 allNotes=(~/notes/*)
-allNotes+=('* new *')
-allNotes+=('[q]uit')
+allNotes+=("$newStr")
+allNotes+=("$quitStr")
 select note in "${allNotes[@]}"
 do
+ [ "$REPLY" == "q" ] && note="$quitStr"
+ [ "$REPLY" == "n" ] && note="$newStr"
+
  case $note in
- '* new *')
+ "$newStr")
   read -p 'Name of new note?: ' newNote
   editNote "$HOME/notes/$newNote"
  ;;
- '[q]uit')
+ "$quitStr")
   exit 0;
  ;;
  *)
